@@ -2,7 +2,9 @@ import {
     postUser,
     deleteSession,
     postSession
-} from '../util/session';
+} from '../utils/session';
+
+
 
 export const RECEIVE_CURRENT_USER = 'RECEIVE_CURRENT_USER';
 export const LOGOUT_CURRENT_USER = 'LOGOUT_CURRENT_USER';
@@ -16,8 +18,18 @@ const logoutCurrentUser = () => ({
     type: LOGOUT_CURRENT_USER,
 });
 
-export const createNewUser = formUser => dispatch => postUser(formUser)
-    .then(user => dispatch(receiveCurrentUser(user)));
+export const createNewUser = formUser => dispatch => {
+    debugger
+    return postUser(formUser).then(user => {
+        return dispatch(receiveCurrentUser(user))
+    })
+};
+
+// export const createNewUser = formUser => dispatch => postUser(formUser)
+    // .then(user => dispatch(receiveCurrentUser(user)));
+// };
+
+
 // postUser -> ajax request, returns promise
 
 export const login = formUser => dispatch => postSession(formUser)

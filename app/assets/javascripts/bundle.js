@@ -161,7 +161,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.logout = exports.login = exports.createNewUser = exports.LOGOUT_CURRENT_USER = exports.RECEIVE_CURRENT_USER = undefined;
 
-var _session = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../util/session'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var _session = __webpack_require__(/*! ../utils/session */ "./frontend/utils/session.js");
 
 var RECEIVE_CURRENT_USER = exports.RECEIVE_CURRENT_USER = 'RECEIVE_CURRENT_USER';
 var LOGOUT_CURRENT_USER = exports.LOGOUT_CURRENT_USER = 'LOGOUT_CURRENT_USER';
@@ -181,11 +181,18 @@ var logoutCurrentUser = function logoutCurrentUser() {
 
 var createNewUser = exports.createNewUser = function createNewUser(formUser) {
     return function (dispatch) {
+        debugger;
         return (0, _session.postUser)(formUser).then(function (user) {
             return dispatch(receiveCurrentUser(user));
         });
     };
 };
+
+// export const createNewUser = formUser => dispatch => postUser(formUser)
+// .then(user => dispatch(receiveCurrentUser(user)));
+// };
+
+
 // postUser -> ajax request, returns promise
 
 var login = exports.login = function login(formUser) {
@@ -567,7 +574,21 @@ exports.default = function (_ref) {
   var currentUser = _ref.currentUser,
       logout = _ref.logout;
 
-  var display = _react2.default.createElement(
+  var display = currentUser ? _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(
+      'p',
+      null,
+      'Hello, ',
+      currentUser.username
+    ),
+    _react2.default.createElement(
+      'button',
+      { onClick: logout },
+      'Log Out'
+    )
+  ) : _react2.default.createElement(
     'div',
     null,
     _react2.default.createElement(
@@ -624,24 +645,29 @@ var _nav_bar = __webpack_require__(/*! ./nav_bar */ "./frontend/components/nav_b
 
 var _nav_bar2 = _interopRequireDefault(_nav_bar);
 
+var _session = __webpack_require__(/*! ../../actions/session */ "./frontend/actions/session.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    currentUser: state.session.currentUser
+  };
+};
 
 // Comment this back in after you have built the login functionality
 
-// import { logout } from '../../actions/session';
-
-// const mapStateToProps = state => ({
-//   currentUser: state.session.currentUser,
-// });
-
-// const mapDispatchToProps = dispatch => ({
-//   logout: () => dispatch(logout()),
-// });
-
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    logout: function logout() {
+      return dispatch((0, _session.logout)());
+    }
+  };
+};
 
 // Comment this out when you have built the login functionality
-var mapStateToProps = null;
-var mapDispatchToProps = null;
+// const mapStateToProps = null;
+// const mapDispatchToProps = null;
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_nav_bar2.default);
 
@@ -1169,6 +1195,44 @@ var deleteLikeFromChirp = exports.deleteLikeFromChirp = function deleteLikeFromC
     method: 'DELETE',
     data: { id: id }
   });
+};
+
+/***/ }),
+
+/***/ "./frontend/utils/session.js":
+/*!***********************************!*\
+  !*** ./frontend/utils/session.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var postUser = exports.postUser = function postUser(user) {
+    return $.ajax({
+        url: 'api/users',
+        method: 'POST',
+        data: { user: user }
+    });
+};
+
+var postSession = exports.postSession = function postSession(user) {
+    return $.ajax({
+        url: 'api/session',
+        method: 'POST',
+        data: { user: user }
+    });
+};
+
+var deleteSession = exports.deleteSession = function deleteSession() {
+    return $.ajax({
+        url: '/api/session',
+        method: 'DELETE'
+    });
 };
 
 /***/ }),
